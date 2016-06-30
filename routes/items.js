@@ -14,6 +14,23 @@ router.get('/', function(req, res) {
     .done();
 });
 
+router.post('/', function(req, res){
+  if( (!req.body.itemUrl) || (! req.body.itemTitle) ){
+    res.status(500).send("Please provide a title or a url for the news.");
+  }
+  else {
+    Item.createItem(req.body.itemTitle, req.body.itemUrl)
+      .then(function(item){
+        res.json(item);
+      })
+      .catch(function(err){
+        console.error(err);
+        res.sendStatus(404);
+      })
+      .done();
+    }
+});
+
 router.get('/:id', function(req, res){
   var itemId = req.params.id;
   Item.getItemById(itemId)
@@ -21,7 +38,7 @@ router.get('/:id', function(req, res){
       res.json(item);
     })
     .catch(function(err){
-      console.log(err);
+      console.error(err);
       res.sendStatus(404);
     })
     .done();
