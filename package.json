@@ -1,0 +1,16 @@
+{
+  "name": "adnews-api",
+  "version": "1.0.0",
+  "description": "AdNeom News Api",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "q": "^1.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "xavier crochet",
+  "license": "ISC"
+}
