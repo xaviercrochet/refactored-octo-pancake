@@ -14,6 +14,19 @@ router.get('/', function(req, res) {
     .done();
 });
 
+router.delete('/:id', function(req, res){
+  var itemId = req.params.id;
+  Item.getItemById(itemId)
+    .then(function(item){
+      item.remove();
+      res.json("News successfully deleted.")
+    })
+    .catch(function(error){
+      res.sendStatus(404);
+    })
+    .done();
+});
+
 router.post('/', function(req, res){
   if( (!req.body.itemUrl) || (! req.body.itemTitle) ){
     res.status(500).send("Please provide a title or a url for the news.");

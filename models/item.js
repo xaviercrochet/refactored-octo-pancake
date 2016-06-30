@@ -9,7 +9,6 @@ var ItemSchema = new Schema({
 
 ItemSchema.statics.createItem = createItem;
 ItemSchema.statics.getItems = getItems;
-ItemSchema.statics.deleteItemById = deleteItemById;
 ItemSchema.statics.getItemById = getItemById;
 
 function getItemById(id){
@@ -24,20 +23,6 @@ function getItemById(id){
   });
   return d.promise;
 }
-
-function deleteItemById(id){
-  var d = q.defer();
-  this.findById(id, function(err, item){
-    if(err) {
-      d.reject(new Error(err));
-    }
-    else {
-      item.remove();
-      d.resolve();
-    }
-  });
-  return d.promise;
-};
 
 function createItem(title, url){
   var item = new Item({newsTitle: title, newsUrl: url});
