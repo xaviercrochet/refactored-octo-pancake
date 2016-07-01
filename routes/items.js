@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var Auth = require('../scripts/authentication');
 var Item = require('../models/item.js');
 
-router.get('/', function(req, res) {
+router.get('/', Auth, function(req, res) {
   Item.getItems()
     .then(function(items){
       res.json(items);
