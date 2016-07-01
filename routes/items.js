@@ -3,7 +3,7 @@ var router = express.Router();
 var Auth = require('../scripts/authentication');
 var Item = require('../models/item.js');
 
-router.get('/', Auth, function(req, res) {
+router.get('/', function(req, res) {
   Item.getItems()
     .then(function(items){
       res.json(items);
@@ -15,7 +15,7 @@ router.get('/', Auth, function(req, res) {
     .done();
 });
 
-router.put('/:id', function(req, res){
+router.put('/:id', Auth, function(req, res){
   var itemId = req.params.id;
   if( (!req.body.newsUrl) || (! req.body.newsTitle) ){
     res.status(500).send("Please provide a title or a url for the news.");
@@ -34,7 +34,7 @@ router.put('/:id', function(req, res){
   }
 });
 
-router.delete('/:id', function(req, res){
+router.delete('/:id', Auth, function(req, res){
   var itemId = req.params.id;
   Item.getItemById(itemId)
     .then(function(item){
@@ -47,7 +47,8 @@ router.delete('/:id', function(req, res){
     .done();
 });
 
-router.post('/', function(req, res){
+
+router.post('/', Auth, function(req, res){
   if( (!req.body.itemUrl) || (! req.body.itemTitle) ){
     res.status(500).send("Please provide a title or a url for the news.");
   }
