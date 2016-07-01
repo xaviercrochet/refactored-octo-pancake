@@ -55,6 +55,9 @@ router.post('/', Auth, function(req, res){
   else {
     Item.createItem(req.body.itemTitle, req.body.itemUrl)
       .then(function(item){
+        return item.setUser(userSessionMgmt.getCurrentUser()._id);
+      })
+      .then(function(item){
         res.json(item);
       })
       .catch(function(err){
