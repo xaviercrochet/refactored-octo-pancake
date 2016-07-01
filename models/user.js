@@ -12,7 +12,7 @@ UserSchema.statics.findByName = findByName
 
 function findByName(name){
   var d = q.defer();
-  User.find({name: name}, function(err, user){
+  User.findOne({name: name}, function(err, user){
     if(err) {
       console.error(err);
       d.reject(err);

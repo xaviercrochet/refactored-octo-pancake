@@ -3,13 +3,12 @@ var router = express.Router();
 var Auth = require('../scripts/authentication');
 var Item = require('../models/item.js');
 
-router.get('/', function(req, res) {
+router.get('/', Auth, function(req, res) {
   Item.getItems()
     .then(function(items){
       res.json(items);
     })
     .catch(function(error){
-      console.error(error);
       res.sendStatus(500);
     })
     .done();

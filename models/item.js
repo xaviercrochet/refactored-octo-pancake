@@ -1,8 +1,10 @@
 var mongoose = require('mongoose');
+var User = require('./user')
 var Schema = mongoose.Schema;
 var q = require('q');
 
 var ItemSchema = new Schema({
+  _user: { type: mongoose.Schema.Types.ObjectId, ref:'User' },
   newsTitle: String,
   newsUrl : String
 });
@@ -12,6 +14,22 @@ ItemSchema.statics.getItems = getItems;
 ItemSchema.statics.getItemById = getItemById;
 
 ItemSchema.methods.updateItem = updateItem;
+ItemSchema.methods.setUser = setUser;
+
+function setUser(userId){
+  var d = q.defer();
+  this._user = userId;
+  this.save(function(err, item){
+    if(err) {
+      console.err(err);
+      d.reject(err);
+    }
+    else {
+      d.resolve(item);
+    }
+  });
+  return d.promise;
+}
 
 function updateItem(url, title){
   var d = q.defer();
