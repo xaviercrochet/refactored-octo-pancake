@@ -14,6 +14,25 @@ router.get('/', function(req, res) {
     .done();
 });
 
+router.put('/:id', function(req, res){
+  var itemId = req.params.id;
+  if( (!req.body.newsUrl) || (! req.body.newsTitle) ){
+    res.status(500).send("Please provide a title or a url for the news.");
+  }
+  else {
+    Item.getItemById(itemId)
+      .then(function(item){
+        item.updateItem(req.body.newsUrl, req.body.newsTitle);
+        res.json(item);
+      })
+      .catch(function(error){
+        console.error(error)
+        res.sendStatus(404);
+      })
+      .done()
+  }
+});
+
 router.delete('/:id', function(req, res){
   var itemId = req.params.id;
   Item.getItemById(itemId)
