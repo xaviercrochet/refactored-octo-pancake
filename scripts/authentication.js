@@ -1,3 +1,5 @@
+/* Adapted from https://davidbeath.com/posts/expressjs-40-basicauth.html */
+
 var express = require('express');
 var User = require('../models/user');
 var basicAuth = require('basic-auth');
@@ -5,6 +7,7 @@ var basicAuth = require('basic-auth');
 var auth = auth
 
 function auth(req, res, next) {
+
   function unauthorized(res) {
     res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
     return res.sendStatus(401);
