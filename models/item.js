@@ -52,11 +52,13 @@ function updateItem(url, title){
 
 function getItemById(id){
   var d = q.defer();
-  this.findById(id, function(err, item){
+  Item.findById(id, function(err, item){
     if(err) {
+      console.error(err);
       d.reject(err);
     }
     else {
+      console.log(item);
       d.resolve(item);
     }
   });
@@ -89,5 +91,5 @@ function getItems() {
   return d.promise;
 };
 
-Item = mongoose.model('Item', ItemSchema);
+var Item = mongoose.model('Item', ItemSchema);
 module.exports = Item;

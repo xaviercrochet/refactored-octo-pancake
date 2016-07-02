@@ -81,4 +81,26 @@ router.get('/:id', function(req, res){
     .done();
 });
 
+router.post('/:id/vote', Auth, function(req, res){
+  var itemId = req.params.id;
+  var userId = userSessionMgmt.getCurrentUser()._id;
+  User.getUserById(userId)
+    .then(function(user){
+      return user.vote(itemId);
+    })
+    .then(function(user){
+      res.json("Vote successfully recorded");
+    })
+    .catch(function(err){
+      if(err == "Already voted"){
+        res.json(err);
+      }
+      else {
+        console.error(err);
+        res.sendStatus(404);
+      }
+    })
+    .done();
+});
+
 module.exports = router;

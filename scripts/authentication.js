@@ -20,7 +20,7 @@ function auth(req, res, next) {
     return unauthorized(res);
   };
 
-  User.findByName(user.name)
+  User.getUserByName(user.name)
     .then(function(user){
       if(user) {
         userSessionMgmt.setCurrentUser(user);
