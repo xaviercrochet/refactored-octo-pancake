@@ -1,13 +1,17 @@
 var mongoose = require('mongoose');
-var User = require('./user')
+var User = require('./user');
+var Vote = require('./vote');
 var Schema = mongoose.Schema;
 var q = require('q');
+
 
 var ItemSchema = new Schema({
   _user: { type: mongoose.Schema.Types.ObjectId, ref:'User' },
   newsTitle: String,
-  newsUrl : String
+  newsUrl : String,
+  votes: [Vote]
 });
+
 
 ItemSchema.statics.createItem = createItem;
 ItemSchema.statics.getItems = getItems;
@@ -19,7 +23,7 @@ ItemSchema.methods.addVote = addVote;
 
 function addVote(vote){
   var d = q.defer();
-  this.push(vote);
+  this.votes.push(vote);
   this.save(function(err, item){
     if(err){
       d.reject(err);
