@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var uniqueValidator = require('mongoose-unique-validator');
-var Vote = require('./vote')
+var Vote = require('./vote');
+var Item = require('./item');
 var q = require('q');
 
 var UserSchema = new Schema({
@@ -17,8 +18,9 @@ UserSchema.methods.vote = vote
 
 // check vote uniqueness here?!?
 function vote(itemId){
+  var userId = this._id;
   var d = q.defer();
-  Vote.findOne({_item: itemId, _user: this._id}, function(err, vote){
+  Vote.findOne({_item: itemId, _user: userId}, function(err, vote){
     if(err){
       console.error(err);
       d.reject(err);
@@ -28,7 +30,7 @@ function vote(itemId){
     }
     else {
       var vote = new Vote({
-        _user: this._id,
+        _user: userId,
         _item: itemId
       });
       vote.save(function(err, vote){
@@ -37,6 +39,14 @@ function vote(itemId){
           d.reject(err);
         }
         else {
+          Item.getItemById(itemId)
+            .then(function(item){
+              item.addVote(vote);
+            })
+            .catch(function(err){
+              d.reject(err);
+            })
+            .done();
           d.resolve(vote);
         }
       });

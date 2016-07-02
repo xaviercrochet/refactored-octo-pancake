@@ -15,6 +15,21 @@ ItemSchema.statics.getItemById = getItemById;
 
 ItemSchema.methods.updateItem = updateItem;
 ItemSchema.methods.setUser = setUser;
+ItemSchema.methods.addVote = addVote;
+
+function addVote(vote){
+  var d = q.defer();
+  this.push(vote);
+  this.save(function(err, item){
+    if(err){
+      d.reject(err);
+    }
+    else{
+      d.resolve(item);
+    }
+  });
+  return d.promise;
+};
 
 function setUser(userId){
   var d = q.defer();
