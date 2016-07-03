@@ -5,9 +5,9 @@ var db = require('mongoose');
 var bodyParser = require('body-parser');
 var app = express();
 
-db.connect('mongodb://localhost/adn');
+db.connect(process.env.MONGODB_URI);
 
-app.listen(3000);
+app.listen(process.env.MONGODB_PORT);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', items);
