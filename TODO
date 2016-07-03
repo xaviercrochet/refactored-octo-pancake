@@ -1,4 +1,5 @@
 plug ('q') promise to mongoose.
+filter data responses (i.e. hide some id fields)
 allow one to comment comments
 improve error messages
 add password authentication

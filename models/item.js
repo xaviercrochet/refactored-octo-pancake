@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
+
 var User = require('./user');
 var Comment = require('./comment');
 var Schema = mongoose.Schema;
@@ -135,7 +137,7 @@ function updateItem(url, title){
 function getItemById(id){
   var d = q.defer();
   Item.findById(id)
-  .populate('comments')
+  .deepPopulate('comments._author')
   .exec(function(err, item){
     if(err) {
       console.error(err);
@@ -179,6 +181,8 @@ function getItems() {
 };
 
 VoteSchema.plugin(uniqueValidator);
+ItemSchema.plugin(deepPopulate, {});
+
 var Vote = mongoose.model('Vote', VoteSchema);
 var Item = mongoose.model('Item', ItemSchema);
 module.exports = Item;
