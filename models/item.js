@@ -103,7 +103,6 @@ function updateItem(url, title){
 function getItemById(id){
   var d = q.defer();
   Item.findById(id)
-  .populate('votes')
   .exec(function(err, item){
     if(err) {
       console.error(err);
