@@ -137,6 +137,7 @@ function updateItem(url, title){
 function getItemById(id){
   var d = q.defer();
   Item.findById(id)
+  .populate('_user')
   .deepPopulate('comments._author')
   .exec(function(err, item){
     if(err) {
