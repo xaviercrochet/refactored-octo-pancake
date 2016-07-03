@@ -5,7 +5,7 @@ var db = require('mongoose');
 var bodyParser = require('body-parser');
 var app = express();
 
-db.connect(process.env.MONGOLAB__RED_URI);
+db.connect(process.env.MONGOLAB_RED_URI);
 
 app.listen(process.env.PORT || 3000 );
 app.use(bodyParser.json());
