@@ -169,7 +169,8 @@ function createItem(title, url, userId){
 
 function getItems() {
   var d = q.defer();
-  this.find({}, function(err, items){
+  this.find({}).populate('_user')
+  .exec(function(err, items){
     if(err){
       d.reject(new Error(err));
     }
