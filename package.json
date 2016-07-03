@@ -18,5 +18,8 @@
     "start": "node app.js"
   },
   "author": "xavier crochet",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "cors": "^2.7.1"
+  }
 }
