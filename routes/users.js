@@ -11,9 +11,9 @@ router.post('/', function(req, res){
       .then(function(user){
         res.json("User successfully created");
       })
-      .catch(function(error){
+      .catch(function(err){
         // TODO: send correct http status
-        res.sendStatus(404);
+        res.status(404).send(err);
       })
       .done();
   }

@@ -27,7 +27,6 @@ router.put('/:id', Auth, function(req, res){
         res.json(item);
       })
       .catch(function(error){
-        console.error(error)
         res.sendStatus(404);
       })
       .done()
@@ -53,15 +52,11 @@ router.post('/', Auth, function(req, res){
     res.status(500).send("Please provide a title or a url for the news.");
   }
   else {
-    Item.createItem(req.body.itemTitle, req.body.itemUrl)
-      .then(function(item){
-        return item.setUser(userSessionMgmt.getCurrentUser()._id);
-      })
+    Item.createItem(req.body.itemTitle, req.body.itemUrl, userSessionMgmt.getCurrentUser()._id)
       .then(function(item){
         res.json(item);
       })
       .catch(function(err){
-        console.error(err);
         res.sendStatus(404);
       })
       .done();
@@ -75,7 +70,6 @@ router.get('/:id', function(req, res){
       res.json(item);
     })
     .catch(function(err){
-      console.error(err);
       res.sendStatus(404);
     })
     .done();
@@ -96,8 +90,7 @@ router.post('/:id/vote', Auth, function(req, res){
         res.json(err);
       }
       else {
-        console.error(err);
-        res.sendStatus(404);
+        res.status(404).send(err);
       }
     })
     .done();

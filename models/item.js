@@ -1,15 +1,32 @@
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
 var User = require('./user');
-var Vote = require('./vote');
 var Schema = mongoose.Schema;
 var q = require('q');
 
+var VoteSchema = new Schema({
+  _user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'User',
+    required: true
+  }
+});
 
 var ItemSchema = new Schema({
-  _user: { type: mongoose.Schema.Types.ObjectId, ref:'User' },
-  newsTitle: String,
-  newsUrl : String,
-  votes: [Vote]
+  _user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'User',
+    required: true
+  },
+  newsTitle: {
+    type: String,
+    required: true
+  },
+  newsUrl: {
+    type: String,
+    required: true
+  },
+  votes: [VoteSchema]
 });
 
 
@@ -21,17 +38,31 @@ ItemSchema.methods.updateItem = updateItem;
 ItemSchema.methods.setUser = setUser;
 ItemSchema.methods.addVote = addVote;
 
-function addVote(vote){
-  var d = q.defer();
-  this.votes.push(vote);
-  this.save(function(err, item){
-    if(err){
-      d.reject(err);
-    }
-    else{
-      d.resolve(item);
-    }
+function addVote(userId){
+  var vote = new Vote({
+    _user: userId
   });
+  var d = q.defer();
+  if(this._user.equals(userId)){
+    d.reject("user is author");
+  }
+  else {
+    this.votes.forEach(function(vote){
+      if(vote._user.equals(userId)){
+        d.reject("user already voted");
+      }
+    });
+    this.votes.push(vote);
+    this.save(function(err, item){
+      if(err){
+        console.error(err);
+        d.reject(err);
+      }
+      else{
+        d.resolve(item);
+      }
+    });
+  }
   return d.promise;
 };
 
@@ -71,21 +102,26 @@ function updateItem(url, title){
 
 function getItemById(id){
   var d = q.defer();
-  Item.findById(id, function(err, item){
+  Item.findById(id)
+  .populate('votes')
+  .exec(function(err, item){
     if(err) {
       console.error(err);
       d.reject(err);
     }
     else {
-      console.log(item);
       d.resolve(item);
     }
   });
   return d.promise;
 }
 
-function createItem(title, url){
-  var item = new Item({newsTitle: title, newsUrl: url});
+function createItem(title, url, userId){
+  var item = new Item({
+    newsTitle: title,
+    newsUrl: url,
+    _user: userId
+  });
   var d = q.defer();
   item.save()
     .then(function(item){
@@ -110,5 +146,7 @@ function getItems() {
   return d.promise;
 };
 
+VoteSchema.plugin(uniqueValidator);
+var Vote = mongoose.model('Vote', VoteSchema);
 var Item = mongoose.model('Item', ItemSchema);
 module.exports = Item;

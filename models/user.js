@@ -1,12 +1,15 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var uniqueValidator = require('mongoose-unique-validator');
-var Vote = require('./vote');
 var Item = require('./item');
 var q = require('q');
 
 var UserSchema = new Schema({
-  name: {type: String, required: true, unique: true}
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  }
 });
 
 UserSchema.statics.createUser = createUser;
@@ -20,38 +23,18 @@ UserSchema.methods.vote = vote
 function vote(itemId){
   var userId = this._id;
   var d = q.defer();
-  Vote.findOne({_item: itemId, _user: userId}, function(err, vote){
-    if(err){
+  Item.getItemById(itemId)
+    .then(function(item){
+      return item.addVote(userId);
+    })
+    .then(function(item){
+      d.resolve(item);
+    })
+    .catch(function(err){
       console.error(err);
       d.reject(err);
-    }
-    else if(vote){
-      d.reject("Already voted");
-    }
-    else {
-      var vote = new Vote({
-        _user: userId,
-        _item: itemId
-      });
-      vote.save(function(err, vote){
-        if(err){
-          console.error(err);
-          d.reject(err);
-        }
-        else {
-          Item.getItemById(itemId)
-            .then(function(item){
-              item.addVote(vote);
-            })
-            .catch(function(err){
-              d.reject(err);
-            })
-            .done();
-          d.resolve(vote);
-        }
-      });
-    }
-  });
+    })
+    .done();
   return d.promise;
 }
 
