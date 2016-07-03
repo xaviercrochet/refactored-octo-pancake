@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
 var User = require('./user');
+var Comment = require('./comment');
 var Schema = mongoose.Schema;
 var q = require('q');
 
@@ -26,7 +27,11 @@ var ItemSchema = new Schema({
     type: String,
     required: true
   },
-  votes: [VoteSchema]
+  votes: [VoteSchema],
+  comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  }]
 });
 
 
@@ -37,6 +42,33 @@ ItemSchema.statics.getItemById = getItemById;
 ItemSchema.methods.updateItem = updateItem;
 ItemSchema.methods.setUser = setUser;
 ItemSchema.methods.addVote = addVote;
+ItemSchema.methods.addComment = addComment;
+
+function addComment(userId, comment){
+  var d = q.defer();
+  var item = this;
+  Comment.createComment(userId, item._id, comment)
+    .then(function(comment){
+      console.log(comment)
+      item.comments.push(comment);
+      console.log(item.comments);
+      item.save(function(err, item){
+        if(err){
+          console.error(err)
+          d.reject(err);
+        }
+        else {
+          d.resolve(item);
+        }
+      });
+    })
+    .catch(function(err){
+      console.error(err);
+      d.reject(err);
+    })
+    .done();
+  return d.promise;
+}
 
 function addVote(userId){
   var vote = new Vote({
@@ -103,6 +135,7 @@ function updateItem(url, title){
 function getItemById(id){
   var d = q.defer();
   Item.findById(id)
+  .populate('comments')
   .exec(function(err, item){
     if(err) {
       console.error(err);

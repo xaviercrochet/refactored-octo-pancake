@@ -4,6 +4,40 @@ var Auth = require('../scripts/authentication');
 var userSessionMgmt = require('../scripts/user-session-mgmt');
 var Item = require('../models/item.js');
 
+router.get('/:id/comments', function(req, res){
+  var itemId = req.params.id;
+  Item.getItemById(itemId)
+    .then(function(item){
+      return item.getComments();
+    })
+    .then(function(comments){
+      res.json(comments);
+    })
+    .catch(function(err){
+      res.status(404).send(err);
+    })
+    .done();
+});
+
+router.post('/:id/comment', Auth, function(req, res){
+  var itemId = req.params.id;
+  var userId = userSessionMgmt.getCurrentUser()._id;
+  if(!req.body.comment){
+    res.status(500).send("Please provide a comment content.");
+  }
+  else {
+    Item.getItemById(itemId)
+      .then(function(item){
+        item.addComment(userId, req.body.comment);
+        res.json("Comment successfully added");
+      })
+      .catch(function(err){
+        res.status(500).send(err);
+      })
+      .done();
+  }
+});
+
 router.get('/', function(req, res) {
   Item.getItems()
     .then(function(items){

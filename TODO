@@ -1,0 +1,4 @@
+plug ('q') promise to mongoose.
+allow one to comment comments
+improve error messages
+add password authentication
