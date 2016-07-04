@@ -118,7 +118,7 @@ router.post('/', Auth, function(req, res){
     }
 });
 
-router.get('/:id', function(req, res){
+router.get('/:id', Auth, function(req, res){
   var itemId = req.params.id;
   Item.getItemById(itemId)
     .then(function(item){
