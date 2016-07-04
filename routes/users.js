@@ -19,4 +19,19 @@ router.post('/', function(req, res){
   }
 });
 
+router.post('/authenticate', function(req, res){
+  if(!req.body.name){
+    req.status(500).send("Name is empty");
+  }
+  else {
+    User.getUserByName(req.body.name)
+      .then(function(user){
+        res.json(user);
+      })
+      .catch(function(err){
+        res.status(404).send(err);
+      });
+  }
+})
+
 module.exports = router;

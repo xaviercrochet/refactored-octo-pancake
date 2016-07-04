@@ -5,6 +5,26 @@ var Auth = require('../scripts/authentication');
 var userSessionMgmt = require('../scripts/user-session-mgmt');
 var Item = require('../models/item.js');
 
+router.post('/authenticate', function(req, res){
+  if(!req.body.name){
+    req.status(500).send("Name is empty");
+  }
+  else {
+    User.getUserByName(req.body.name)
+      .then(function(user){
+        if(user){
+          res.json("Authenticated successfully");
+        }
+        else {
+          res.status(401).send("Authentication failed.");
+        }
+      })
+      .catch(function(err){
+        res.status(404).send(err);
+      });
+  }
+});
+
 router.get('/:id/comments', function(req, res){
   var itemId = req.params.id;
   Item.getItemById(itemId)
