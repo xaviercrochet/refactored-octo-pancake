@@ -40,7 +40,7 @@ router.get('/:id/comments', function(req, res){
     .done();
 });
 
-router.post('/:id/comment', Auth, function(req, res){
+router.post('/:id/comment', function(req, res){
   var itemId = req.params.id;
   var userId = userSessionMgmt.getCurrentUser()._id;
   if(!req.body.comment){
