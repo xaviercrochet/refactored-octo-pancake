@@ -74,21 +74,27 @@ function addVote(userId){
     d.reject("user is author");
   }
   else {
+    var found = false
     this.votes.forEach(function(vote){
       if(vote._user.equals(userId)){
-        d.reject("user already voted");
+        found = true;
       }
     });
-    this.votes.push(vote);
-    this.save(function(err, item){
-      if(err){
-        console.error(err);
-        d.reject(err);
-      }
-      else{
-        d.resolve(item);
-      }
-    });
+    if(found){
+      d.reject("user already voted");
+    }
+    else {
+      this.votes.push(vote);
+      this.save(function(err, item){
+        if(err){
+          console.error(err);
+          d.reject(err);
+        }
+        else{
+          d.resolve(item);
+        }
+      });
+    }
   }
   return d.promise;
 };
@@ -131,7 +137,7 @@ function getItemById(id){
   var d = q.defer();
   Item.findById(id)
   .populate('_user')
-  .deepPopulate('comments._author')
+  .deepPopulate(['comments._author', 'votes._user'])
   .exec(function(err, item){
     if(err) {
       console.error(err);

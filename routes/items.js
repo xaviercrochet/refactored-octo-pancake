@@ -119,6 +119,7 @@ router.get('/:id', function(req, res){
     .done();
 });
 
+
 router.post('/:id/vote', Auth, function(req, res){
   var itemId = req.params.id;
   var userId = userSessionMgmt.getCurrentUser()._id;
