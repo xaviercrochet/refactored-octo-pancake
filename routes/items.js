@@ -3,7 +3,8 @@ var router = express.Router();
 
 var Auth = require('../scripts/authentication');
 var userSessionMgmt = require('../scripts/user-session-mgmt');
-var Item = require('../models/item.js');
+var Item = require('../models/item');
+var Comment = require('../models/comment');
 
 router.post('/authenticate', function(req, res){
   if(!req.body.name){
@@ -25,37 +26,24 @@ router.post('/authenticate', function(req, res){
   }
 });
 
-router.get('/:id/comments', function(req, res){
+router.post('/:id/comments', Auth, function(req, res){
   var itemId = req.params.id;
-  Item.getItemById(itemId)
-    .then(function(item){
-      return item.getComments();
-    })
-    .then(function(comments){
-      res.json(comments);
-    })
-    .catch(function(err){
-      res.status(404).send(err);
-    })
-    .done();
-});
-
-router.post('/:id/comment', function(req, res){
-  var itemId = req.params.id;
-  var userId = userSessionMgmt.getCurrentUser()._id;
+  var userId = userSessionMgmt.getCurrentUser()._id
   if(!req.body.comment){
-    res.status(500).send("Please provide a comment content.");
+    res.status(500).send("Please provide a comment.");
   }
   else {
-    Item.getItemById(itemId)
+    Item.findById(itemId)
       .then(function(item){
-        item.addComment(userId, req.body.comment);
-        res.json("Comment successfully added");
-      })
-      .catch(function(err){
-        res.status(500).send(err);
-      })
-      .done();
+          return item.addComment(userId, req.body.comment)
+        }).then(function(createdComment){
+          return Comment.findById(createdComment._id).populate('_author');
+        }).then(function(commentWithAuthor){
+          res.json(commentWithAuthor);
+        }, function(err){
+          console.error(err);
+          res.status(500).send(err);
+        });
   }
 });
 
@@ -112,13 +100,14 @@ router.post('/', Auth, function(req, res){
         res.json(item);
       })
       .catch(function(err){
+        console.error(err);
         res.sendStatus(404);
       })
       .done();
     }
 });
 
-router.get('/:id', Auth, function(req, res){
+router.get('/:id', function(req, res){
   var itemId = req.params.id;
   Item.getItemById(itemId)
     .then(function(item){

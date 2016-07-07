@@ -50,25 +50,14 @@ function addComment(userId, comment){
   var d = q.defer();
   var item = this;
   Comment.createComment(userId, item._id, comment)
-    .then(function(comment){
-      console.log(comment)
-      item.comments.push(comment);
-      console.log(item.comments);
-      item.save(function(err, item){
-        if(err){
-          console.error(err)
-          d.reject(err);
-        }
-        else {
-          d.resolve(item);
-        }
-      });
-    })
-    .catch(function(err){
+    .then(function(createdComment){
+      item.comments.push(createdComment);
+      item.save()
+      d.resolve(createdComment);
+    }, function(err){
       console.error(err);
       d.reject(err);
-    })
-    .done();
+    });
   return d.promise;
 }
 

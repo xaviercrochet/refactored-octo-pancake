@@ -13,7 +13,7 @@ router.post('/', function(req, res){
       })
       .catch(function(err){
         // TODO: send correct http status
-        res.status(404).send(err);
+        res.status(500).send(err);
       })
       .done();
   }

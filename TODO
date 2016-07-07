@@ -1,5 +1,8 @@
 plug ('q') promise to mongoose.
 filter data responses (i.e. hide some id fields)
+rename user.name to user.username
+add password to user
+move some routes from items routes
 allow one to comment comments
 improve error messages
 add password authentication

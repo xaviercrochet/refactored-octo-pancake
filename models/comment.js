@@ -28,17 +28,18 @@ var CommentSchema = new Schema({
 
 CommentSchema.statics.createComment = createComment;
 
-function createComment(userId, subjectId, comment){
+function createComment(userId, subjectId, commentContent){
   var comment = new Comment({
     _author: userId,
     subject: subjectId,
-    content: comment
+    content: commentContent
   });
   var d = q.defer();
-  comment.save().then(
-    function(item){
-      d.resolve(item);
+  comment.save()
+    .then(function(createdComment){
+      d.resolve(createdComment);
     }, function(err) {
+      console.error(err);
       d.reject(err);
   });
   return d.promise;
