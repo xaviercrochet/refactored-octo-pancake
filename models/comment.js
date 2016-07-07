@@ -10,6 +10,10 @@ var CommentSchema = new Schema({
     type: String,
     required: true
   },
+  date: {
+    type: Date,
+    default: Date.now
+  },
   _author: {
     type: mongoose.Schema.Types.ObjectId,
     ref:'User',

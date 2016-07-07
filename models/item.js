@@ -29,6 +29,10 @@ var ItemSchema = new Schema({
     type: String,
     required: true
   },
+  date: {
+    type: Date,
+    default: Date.now
+  },
   votes: [VoteSchema],
   comments: [{
     type: mongoose.Schema.Types.ObjectId,
